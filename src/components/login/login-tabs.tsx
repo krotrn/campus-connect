@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { ReusableTabs } from '@/components/shared/shared-tabs';
+import { SharedTabs } from '@/components/shared/shared-tabs';
 import LoginForm from '@/components/login/login-form';
 import { USER_ROLES } from '@/constants';
 import type { TabItem } from '@/types/ui';
@@ -35,7 +35,7 @@ export default function LoginTabs({
   ];
 
   return (
-    <ReusableTabs
+    <SharedTabs
       tabs={tabs}
       defaultValue={USER_ROLES.CUSTOMER}
       className={className}

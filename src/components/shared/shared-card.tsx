@@ -9,14 +9,14 @@ import {
 } from '@/components/ui/card';
 import type { CardConfig } from '@/types/ui';
 
-interface ReusableCardProps extends CardConfig {
+interface SharedCardProps extends CardConfig {
   children: React.ReactNode;
   headerContent?: React.ReactNode;
   footerContent?: React.ReactNode;
 }
 
 
-export function ReusableCard({
+export function SharedCard({
   title,
   description,
   showHeader = true,
@@ -25,7 +25,7 @@ export function ReusableCard({
   children,
   headerContent,
   footerContent,
-}: ReusableCardProps) {
+}: SharedCardProps) {
   return (
     <Card className={`border-none shadow-xl ${className}`}>
       {showHeader && (

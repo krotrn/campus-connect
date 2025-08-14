@@ -2,20 +2,20 @@ import React from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import type { TabItem } from '@/types/ui';
 
-interface ReusableTabsProps {
+interface SharedTabsProps {
   tabs: TabItem[];
   defaultValue: string;
   className?: string;
   tabsListClassName?: string;
   tabsContentClassName?: string;
 }
-export function ReusableTabs({
+export function SharedTabs({
   tabs,
   defaultValue,
   className = '',
   tabsListClassName = '',
   tabsContentClassName = '',
-}: ReusableTabsProps) {
+}: SharedTabsProps) {
   return (
     <Tabs
       defaultValue={defaultValue}

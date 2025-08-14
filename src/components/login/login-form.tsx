@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { ReusableForm } from '@/components/shared/shared-form';
+import { SharedForm } from '@/components/shared/shared-form';
 import { useLoginForm } from '@/hooks/useAuth';
 import { FORM_FIELD_NAMES } from '@/constants';
 import type { FormFieldConfig, ButtonConfig } from '@/types/ui';
@@ -19,7 +19,7 @@ export default function LoginForm({
 }: LoginFormProps) {
   const { form, isLoading, error, handleSubmit } = useLoginForm();
 
-  const formFields: FormFieldConfig[] = [
+  const formFields: FormFieldConfig<LoginFormData>[] = [
     {
       name: FORM_FIELD_NAMES.EMAIL,
       label: 'Email',
@@ -50,7 +50,7 @@ export default function LoginForm({
   const submitHandler = handleSubmit(onSubmit);
 
   return (
-    <ReusableForm
+    <SharedForm
       form={form}
       fields={formFields}
       submitButton={submitButton}

@@ -1,5 +1,5 @@
 import React from "react";
-import Login from "@/pages/login/page";
+import Login from "@/pages/login";
 
 const page = () => {
   return (
