@@ -1,5 +1,5 @@
 "use client";
-import { ReusableCard } from '@/components/shared/shared-card';
+import { SharedCard } from '@/components/shared/shared-card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import LoginTabs from './login-tabs';
@@ -37,12 +37,12 @@ export default function LoginCard({
       onClick={handleSignUp}
       type="button"
     >
-      Don't have an account?
+      Don&apos;t have an account?
     </Button>
   );
 
   return (
-    <ReusableCard
+    <SharedCard
       title={title}
       description={description}
       showHeader={true}
@@ -50,7 +50,7 @@ export default function LoginCard({
       footerContent={footerContent}
       className={className}
     >
-      <LoginTabs/>
+      <LoginTabs />
 
       <Separator className="my-4" />
 
@@ -62,6 +62,6 @@ export default function LoginCard({
       >
         Sign in with Google
       </Button>
-    </ReusableCard>
+    </SharedCard>
   );
 }

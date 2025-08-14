@@ -11,12 +11,21 @@ import {
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
-import type { UseFormReturn } from 'react-hook-form';
-import type { FormFieldConfig, ButtonConfig } from '@/types/ui';
+import type { FieldValues, UseFormReturn, Path } from 'react-hook-form';
+import type { ButtonConfig } from '@/types/ui';
 
-interface ReusableFormProps {
-  form: UseFormReturn<any>;
-  fields: FormFieldConfig[];
+interface FormFieldConfig<T extends FieldValues> {
+  name: Path<T>;
+  label: string;
+  type?: string;
+  placeholder?: string;
+  disabled?: boolean;
+  required?: boolean;
+}
+
+interface SharedFormProps<T extends FieldValues = FieldValues> {
+  form: UseFormReturn<T>;
+  fields: FormFieldConfig<T>[];
   submitButton: ButtonConfig;
   onSubmit: (e?: React.BaseSyntheticEvent) => void | Promise<void>;
   isLoading?: boolean;
@@ -25,8 +34,7 @@ interface ReusableFormProps {
   children?: React.ReactNode;
 }
 
-
-export function ReusableForm({
+export function SharedForm<T extends FieldValues>({
   form,
   fields,
   submitButton,
@@ -35,7 +43,7 @@ export function ReusableForm({
   error,
   className = '',
   children,
-}: ReusableFormProps) {
+}: SharedFormProps<T>) {
   return (
     <Form {...form}>
       <form className={`space-y-4 ${className}`} onSubmit={onSubmit}>
@@ -84,3 +92,4 @@ export function ReusableForm({
     </Form>
   );
 }
+

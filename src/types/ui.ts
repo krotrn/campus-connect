@@ -1,3 +1,5 @@
+import { HTMLInputTypeAttribute } from "react";
+import { FieldValues, Path } from "react-hook-form";
 
 
 export interface TabItem {
@@ -16,10 +18,10 @@ export interface CardConfig {
   className?: string;
 }
 
-export interface FormFieldConfig {
-  name: string;
+export interface FormFieldConfig<T extends FieldValues> {
+  name: Path<T>;
   label: string;
-  type: "text" | "email" | "password" | "tel" | "url";
+  type: HTMLInputTypeAttribute;
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
