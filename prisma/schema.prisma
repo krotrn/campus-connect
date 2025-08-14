@@ -72,6 +72,8 @@ model User {
   reviews Review[]
   carts   Cart[]
   orders  Order[]
+
+  @@index([role])
 }
 
 model Shop {
@@ -94,6 +96,8 @@ model Shop {
   products Product[]
   orders   Order[]
   payouts  Payout[]
+
+  @@index([verification_status])
 }
 
 model Review {
@@ -107,14 +111,17 @@ model Review {
 
   user    User    @relation(fields: [user_id], references: [id])
   product Product @relation(fields: [product_id], references: [id])
+
+  @@index([product_id])
+  @@index([user_id])
 }
 
 model Product {
   id             String   @id @default(cuid())
   name           String
   description    String?
-  price          Float
-  discount       Float?
+  price          Decimal
+  discount       Decimal?
   stock_quantity Int      @default(0)
   rating         Float    @default(0)
   image_url      String
@@ -127,6 +134,8 @@ model Product {
   reviews    Review[]
   cartItems  CartItem[]
   orderItems OrderItem[]
+
+  @@index([shop_id])
 }
 
 model Cart {
@@ -145,11 +154,13 @@ model CartItem {
 
   cart    Cart    @relation(fields: [cart_id], references: [id])
   product Product @relation(fields: [product_id], references: [id])
+
+  @@index([cart_id])
 }
 
 model Order {
   id             String        @id @default(cuid())
-  total_price    Float
+  total_price    Decimal
   payment_method PaymentMethod
   created_at     DateTime      @default(now())
   updated_at     DateTime      @updatedAt
@@ -165,6 +176,11 @@ model Order {
   shop_id String
   shop    Shop        @relation(fields: [shop_id], references: [id])
   items   OrderItem[]
+
+  @@index([user_id])
+  @@index([shop_id])
+  @@index([order_status])
+  @@index([payment_status])
 }
 
 model OrderItem {
@@ -176,11 +192,13 @@ model OrderItem {
   order      Order   @relation(fields: [order_id], references: [id])
   product_id String
   product    Product @relation(fields: [product_id], references: [id])
+
+  @@index([order_id])
 }
 
 model Payout {
   id           String       @id @default(cuid())
-  amount       Float
+  amount       Decimal
   status       PayoutStatus @default(PENDING)
   pg_payout_id String       @unique
   arrival_date DateTime
@@ -188,4 +206,7 @@ model Payout {
 
   shop_id String
   shop    Shop   @relation(fields: [shop_id], references: [id])
+
+  @@index([shop_id])
+  @@index([status])
 }
