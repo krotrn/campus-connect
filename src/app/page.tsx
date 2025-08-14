@@ -3,9 +3,9 @@ import Login from "@/pages/login/page";
 
 const page = () => {
   return (
-    <div>
+    <>
       <Login />
-    </div>
+    </>
   );
 };
 

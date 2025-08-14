@@ -1,28 +1,27 @@
-import LoginCard from "@/components/login/login-card";
-import Image from "next/image";
+import React from 'react';
+import LoginCard from '@/components/login/login-card';
 
 export default function LoginPage() {
-  return (
-    <div className="flex min-h-screen min-w-full items-center justify-center p-0">
-      <div className="grid w-full h-screen max-w-none grid-cols-1 gap-0 md:grid-cols-2">
-        <div className="hidden md:flex items-center justify-center h-screen w-full bg-gray-800">
-          <div className="relative h-full w-full overflow-hidden">
-            <Image
-              src="/p.jpg"
-              alt="Login Illustration"
-              fill
-              className="object-cover opacity-90"
-              priority
-              quality={100}
-            />
-          </div>
-        </div>
 
-        <div className="flex items-center justify-center h-screen w-full bg-teal-100">
-          <div className="w-full max-w-lg px-8">
-            <div className="scale-140 transform origin-center bg-blue-100">
-              <LoginCard />
+  return (
+    <div className="flex min-h-screen w-full items-center justify-center p-0 bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="grid w-full h-screen max-w-none grid-cols-1 gap-0 md:grid-cols-2">
+        <aside className="hidden md:flex items-center justify-center h-screen bg-gradient-to-br from-blue-600 to-indigo-800">
+          <div className="relative h-full w-full overflow-hidden">
+            <div className="absolute inset-0 flex items-center justify-center p-8">
+              <div className="text-center text-white">
+                <h1 className="text-4xl font-bold mb-4">Welcome to College Connect</h1>
+              </div>
             </div>
+          </div>
+        </aside>
+
+        <div className="flex items-center justify-center h-screen w-full bg-white">
+          <div className="w-full flex items-center justify-center">
+            <LoginCard
+              title="Welcome Back"
+              description="Sign in to your account to continue"
+            />
           </div>
         </div>
       </div>

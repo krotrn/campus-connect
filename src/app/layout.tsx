@@ -5,8 +5,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "College Project",
-  description: "Login page",
+  title: "College Connect",
+  description: "Connecting students and staff for better education",
 };
 
 export default function RootLayout({
@@ -16,7 +16,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+          {children}
+      </body>
     </html>
   );
 }
