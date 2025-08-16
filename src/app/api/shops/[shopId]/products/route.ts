@@ -6,65 +6,14 @@ import {
   createErrorResponse,
 } from "@/types/response.type";
 
-/**
- * Retrieves products from a specific shop with cursor-based pagination.
- *
- * This API endpoint fetches products belonging to a specific shop identified by the shop_id
- * parameter. It implements cursor-based pagination for efficient loading of large product
- * datasets. Products are returned in reverse chronological order (newest first) based on
- * their creation date. The endpoint supports configurable page sizes and provides cursor
- * information for seamless pagination.
- *
- * @param request - The Next.js request object containing query parameters for pagination
- * @param params - Route parameters containing the shop_id
- * @param params.shop_id - The unique identifier of the shop whose products to retrieve
- *
- * @returns A promise that resolves to a NextResponse containing:
- *   - 200: Success response with paginated products and next cursor
- *   - 400: Bad request when shop_id is missing or invalid
- *   - 500: Internal server error for unexpected failures
- *
- * @throws {Error} When product retrieval fails due to service errors or database issues
- *
- * @example
- * ```typescript
- * // GET /api/shops/123/products?limit=5&cursor=abc123
- * const response = await fetch('/api/shops/123/products?limit=5&cursor=abc123');
- *
- * const result = await response.json();
- * if (result.success) {
- *   console.log('Products:', result.data.data);
- *   console.log('Next cursor:', result.data.nextCursor);
- *
- *   // Load next page
- *   if (result.data.nextCursor) {
- *     const nextPage = await fetch(`/api/shops/123/products?cursor=${result.data.nextCursor}`);
- *   }
- * } else {
- *   console.error('Failed to get products:', result.message);
- * }
- * ```
- *
- * @remarks
- * - Uses cursor-based pagination for better performance with large datasets
- * - Default page size is 10 products, configurable via 'limit' query parameter
- * - Products are ordered by creation date in descending order (newest first)
- * - Returns nextCursor for pagination when more products are available
- * - Shop ID validation ensures only valid shop identifiers are processed
- * - Logs errors for debugging while returning user-friendly error messages
- * - Response includes both product data and pagination metadata
- *
- * @see {@link productServices.getProductsByShopId} for the underlying service method
- * @see {@link createSuccessResponse} and {@link createErrorResponse} for response formatting
- */
 export async function GET(
   request: Request,
-  { params }: { params: { shop_id: string } },
+  { params }: { params: { shopId: string } }
 ) {
   try {
-    const { shop_id } = params;
+    const { shopId } = params;
 
-    if (!shop_id) {
+    if (!shopId) {
       const errorResponse = createErrorResponse("Shop ID is required.");
       return NextResponse.json(errorResponse, { status: 400 });
     }
@@ -83,8 +32,8 @@ export async function GET(
     };
 
     const products = await productServices.getProductsByShopId(
-      shop_id,
-      queryOptions,
+      shopId,
+      queryOptions
     );
 
     let nextCursor: typeof cursor | null = null;
@@ -99,13 +48,13 @@ export async function GET(
     };
     const successResponse = createSuccessResponse(
       responseData,
-      "Products retrieved successfully",
+      "Products retrieved successfully"
     );
     return NextResponse.json(successResponse);
   } catch (error) {
     console.error("GET PRODUCTS ERROR:", error);
     const errorResponse = createErrorResponse(
-      "An internal server error occurred.",
+      "An internal server error occurred."
     );
     return NextResponse.json(errorResponse, { status: 500 });
   }

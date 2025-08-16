@@ -4,10 +4,9 @@ import React from "react";
 import { SharedForm } from "@/components/shared/shared-form";
 import { FORM_FIELD_NAMES } from "@/constants";
 import type { FormFieldConfig, ButtonConfig } from "@/types/ui";
-import { registerSchema, type RegisterFormData } from "@/lib/validations/auth";
-import { useRegisterUser } from "@/hooks";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import type { RegisterFormData } from "@/lib/validations/auth";
+
+import { registerAction } from "@/actions/authentication/register-actions";
 
 /**
  * Configuration properties for the RegisterForm component.

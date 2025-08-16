@@ -414,7 +414,7 @@ class CartServices {
           quantity,
           cart: { connect: { user_id_shop_id: { user_id, shop_id } } },
           product: { connect: { id: product_id } },
-        },
+        }
       });
     } else {
       const cart = await this.getCartForShop(user_id, shop_id);

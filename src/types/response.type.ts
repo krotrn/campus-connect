@@ -62,7 +62,6 @@ export interface ActionResponse<T = unknown> {
   error: boolean;
   /** Optional data payload returned on successful operations */
   data?: T;
-  /** Human-readable description of the operation result */
   details: string;
 }
 
@@ -95,7 +94,6 @@ export interface ActionResponse<T = unknown> {
 export interface AuthResponse {
   /** Indicates if the authentication operation was successful */
   success: boolean;
-  /** Human-readable description of the authentication result */
   details: string;
 }
 
@@ -128,7 +126,6 @@ export interface AuthResponse {
 export interface HealthCheckResponse {
   /** System status indicator - 'ok' for healthy, 'error' for issues */
   status: "ok" | "error";
-  /** Detailed description of the system status */
   details: string;
 }
 

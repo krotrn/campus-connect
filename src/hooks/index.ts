@@ -1,3 +1,4 @@
+export * from "./useAuth";
 export * from "./useCart";
 export * from "./useOrders";
 export * from "./useShopProducts";
