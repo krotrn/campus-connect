@@ -23,6 +23,30 @@ import { OrderStatus, PaymentMethod } from "@prisma/client";
  *   - success: boolean indicating if the order was created successfully
  *   - data: the created order object (if successful)
  *   - message: success or error message
+ *
+ * @throws {Error} When order creation fails due to service errors
+ *
+ * @example
+ * ```typescript
+ * const result = await createOrderAction({
+ *   shop_id: "shop_123",
+ *   payment_method: "ONLINE"
+ * });
+ *
+ * if (result.success) {
+ *   console.log("Order created:", result.data);
+ * } else {
+ *   console.error("Order failed:", result.message);
+ * }
+ * ```
+ *
+ * @remarks
+ * - Requires user authentication via session
+ * - Automatically generates payment gateway ID for online payments
+ * - Clears the user's cart items for the specified shop after order creation
+ * - TODO: Implement actual payment processing integration
+ * - TODO: Add revalidatePath for cache invalidation
+ *
  * @see {@link orderServices.createOrderFromCart} for the underlying service method
  * @see {@link PaymentMethod} for available payment options
  */
@@ -52,9 +76,9 @@ export async function createOrderAction({
 
     // TODO: revalidatePath
     return createSuccessResponse(order, "Order placed successfully!");
-  } catch (error) {
+  } catch (error: any) {
     console.error("CREATE ORDER ERROR:", error);
-    return createErrorResponse("Failed to create order.");
+    return createErrorResponse(error.message || "Failed to create order.");
   }
 }
 
@@ -89,7 +113,11 @@ export async function createOrderAction({
  * }
  * ```
  *
- * @todo Add revalidatePath for cache invalidation
+ * @remarks
+ * - Requires seller authentication (user must have a shop_id)
+ * - Verifies order ownership before allowing status updates
+ * - Only shop owners can update their own orders
+ * - TODO: Add revalidatePath for cache invalidation
  *
  * @see {@link orderServices.updateOrderStatus} for the underlying service method
  * @see {@link OrderStatus} for available order statuses

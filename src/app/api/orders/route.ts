@@ -6,9 +6,6 @@ import {
   createErrorResponse,
 } from "@/types/response.type";
 
-export const config = {
-  runtime: "edge",
-};
 /**
  * Retrieves all orders for the authenticated user.
  *
@@ -26,10 +23,36 @@ export const config = {
  *
  * @throws {Error} When order retrieval fails due to service errors
  *
+ * @example
+ * ```typescript
+ * // GET /api/orders
+ * const response = await fetch('/api/orders', {
+ *   headers: { 'Cookie': 'session=...' }
+ * });
+ *
+ * const result = await response.json();
+ * if (result.success) {
+ *   console.log('User orders:', result.data);
+ *   result.data.forEach(order => {
+ *     console.log(`Order ${order.id}: ${order.status}`);
+ *   });
+ * } else {
+ *   console.error('Failed to get orders:', result.message);
+ * }
+ * ```
+ *
+ * @remarks
+ * - Requires valid user session for authentication
+ * - Returns complete order history for the authenticated user
+ * - Order data includes product details, quantities, pricing, and status
+ * - Orders typically include timestamps, delivery information, and payment status
+ * - Logs errors for debugging while returning user-friendly error messages
+ * - No pagination implemented - returns all user orders
+ *
  * @see {@link orderServices.getOrdersByUserId} for the underlying service method
  * @see {@link createSuccessResponse} and {@link createErrorResponse} for response formatting
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
