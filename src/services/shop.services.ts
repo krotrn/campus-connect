@@ -33,15 +33,6 @@
  * });
  * ```
  *
- * @remarks
- * **Features:**
- * - Full CRUD operations for shops
- * - Owner-specific shop management
- * - Flexible query options with Prisma
- * - Type-safe operations with overloads
- * - Business management integration
- * - Validation and error handling
- *
  * @see {@link Shop} for shop data structure
  * @see {@link CreateShopDto} for shop creation data
  * @see {@link UpdateShopDto} for shop update data
@@ -437,6 +428,79 @@ class ShopServices {
     return prisma.shop.update(query);
   }
 
+  /**
+   * Deletes a shop from the system.
+   *
+   * Removes a shop from the database permanently. This is a critical operation
+   * that should be used with caution as it affects all associated products and orders.
+   * Supports flexible query options for returning deleted shop data.
+   *
+   * @example
+   * ```typescript
+   * // Delete a shop
+   * const deletedShop = await shopServices.deleteShop('shop123');
+   * console.log(`Deleted shop: ${deletedShop.name}`);
+   *
+   * // Delete with owner information included
+   * const deletedWithOwner = await shopServices.deleteShop('shop123', {
+   *   include: {
+   *     owner: {
+   *       select: { name: true, email: true }
+   *     }
+   *   }
+   * });
+   *
+   * // Usage in shop management component
+   * const ShopDeleteButton = ({ shopId }: { shopId: string }) => {
+   *   const [deleting, setDeleting] = useState(false);
+   *
+   *   const handleDelete = async () => {
+   *     const confirmed = confirm(
+   *       'Are you sure you want to delete this shop? This action cannot be undone and will affect all products and orders.'
+   *     );
+   *
+   *     if (!confirmed) return;
+   *
+   *     setDeleting(true);
+   *     try {
+   *       await shopServices.deleteShop(shopId);
+   *       // Redirect to user dashboard or shops list
+   *       router.push('/dashboard');
+   *       toast.success('Shop deleted successfully');
+   *     } catch (error) {
+   *       console.error('Failed to delete shop:', error);
+   *       toast.error('Failed to delete shop');
+   *     } finally {
+   *       setDeleting(false);
+   *     }
+   *   };
+   *
+   *   return (
+   *     <button
+   *       onClick={handleDelete}
+   *       disabled={deleting}
+   *       className="bg-red-500 text-white px-4 py-2 rounded"
+   *     >
+   *       {deleting ? 'Deleting...' : 'Delete Shop'}
+   *     </button>
+   *   );
+   * };
+   * ```
+   *
+   * @param shop_id - The unique identifier of the shop to delete
+   * @param options - Optional Prisma query options for includes, selects, etc.
+   * @returns A promise that resolves to the deleted shop
+   *
+   * @throws {Error} When shop doesn't exist
+   * @throws {Error} When shop has active orders (referential integrity)
+   * @throws {Error} When unauthorized deletion is attempted
+   * @throws {Error} When database deletion fails
+   *
+   * @see {@link ShopDeleteOptions} for available deletion options
+   * @see {@link Shop} for deleted shop structure
+   *
+   * @since 1.0.0
+   */
   async deleteShop(shop_id: string): Promise<Shop>;
   async deleteShop<T extends ShopDeleteOptions>(
     shop_id: string,

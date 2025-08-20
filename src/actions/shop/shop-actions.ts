@@ -6,6 +6,31 @@ import {
   createSuccessResponse,
 } from "@/types/response.type";
 
+/**
+ * Creates a new shop for the authenticated user.
+ *
+ * This server action validates the provided shop data, authenticates the user,
+ * and creates a new shop associated with their account. It ensures that users
+ * can only own one shop and validates all input data before creation.
+ *
+ * @param formData - The form data containing shop information
+ * @param formData.name - The shop name (extracted from form)
+ * @param formData.description - The shop description (extracted from form)
+ * @param formData.location - The physical location of the shop (extracted from form)
+ * @param formData.opening - The shop opening time (extracted from form)
+ * @param formData.closing - The shop closing time (extracted from form)
+ *
+ * @returns A promise that resolves to a response object containing:
+ *   - success: boolean indicating if the shop was created successfully
+ *   - data: the created shop object (if successful)
+ *   - message: success or error message with instructions for accessing seller dashboard
+ *
+ * @throws {Error} When shop creation fails due to service errors
+ * 
+ * @see {@link shopSchema} for input validation rules
+ * @see {@link shopServices.createShop} for the underlying service method
+ * @see {@link shopServices.getShopByOwnerId} for ownership verification
+ */
 export async function createShopAction(formData: FormData) {
   try {
     const session = await auth();
@@ -44,7 +69,50 @@ export async function createShopAction(formData: FormData) {
   }
 }
 
-
+/**
+ * Updates an existing shop's information for the authenticated shop owner.
+ *
+ * This server action allows shop owners to modify their shop details including
+ * name, description, location, and operating hours. It verifies that the user
+ * is authenticated as a seller and has permission to update the shop.
+ *
+ * @param formData - The form data containing updated shop information
+ * @param formData.name - The updated shop name (extracted from form)
+ * @param formData.description - The updated shop description (extracted from form)
+ * @param formData.location - The updated physical location (extracted from form)
+ * @param formData.opening - The updated shop opening time (extracted from form)
+ * @param formData.closing - The updated shop closing time (extracted from form)
+ *
+ * @returns A promise that resolves to a response object containing:
+ *   - success: boolean indicating if the shop was updated successfully
+ *   - data: success message (if successful)
+ *   - message: success or error message
+ *
+ * @throws {Error} When shop update fails due to service errors
+ *
+ * @example
+ * ```typescript
+ * const formData = new FormData();
+ * formData.append("name", "Updated Campus Store");
+ * formData.append("description", "Extended selection of books and supplies");
+ * formData.append("location", "Building B, Room 205");
+ * formData.append("opening", "08:30");
+ * formData.append("closing", "19:00");
+ *
+ * const result = await updateShopAction(formData);
+ *
+ * if (result.success) {
+ *   console.log("Shop updated successfully");
+ * } else {
+ *   console.error("Update failed:", result.message);
+ * }
+ * ```
+ *
+ * @todo Add revalidatePath for cache invalidation
+ *
+ * @see {@link shopSchema} for input validation rules
+ * @see {@link shopServices.updateShop} for the underlying service method
+ */
 export async function updateShopAction(formData: FormData) {
   try {
     const session = await auth();
