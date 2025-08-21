@@ -1,5 +1,12 @@
+import React from "react";
+import Login from "@/page-components/auth/login";
+
 const page = () => {
-  return <>Hello</>;
+  return (
+    <>
+      <Login />
+    </>
+  );
 };
 
 export default page;
