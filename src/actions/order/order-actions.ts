@@ -38,10 +38,16 @@ export async function createOrderAction({
     }
 
     // TODO: Implement payment processing
-    const pg_payment_id = payment_method === 'ONLINE' ? `txn_${new Date().getTime()}` : undefined;
-    
-    const order = await orderServices.createOrderFromCart(session.user.id, shop_id, payment_method, pg_payment_id);
-    
+    const pg_payment_id =
+      payment_method === "ONLINE" ? `txn_${new Date().getTime()}` : "offline";
+
+    const order = await orderServices.createOrderFromCart(
+      session.user.id,
+      shop_id,
+      payment_method,
+      pg_payment_id,
+    );
+
     // TODO: revalidatePath
     return createSuccessResponse(order, "Order placed successfully!");
   } catch (error) {
