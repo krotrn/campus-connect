@@ -1,10 +1,11 @@
+import { NextRequest, NextResponse } from "next/server";
+
 import { hashPassword } from "@/lib/auth";
 import { registerSchema } from "@/lib/validations/auth";
 import userServices from "@/services/user.services";
-import { NextRequest, NextResponse } from "next/server";
 import {
-  createSuccessResponse,
   createErrorResponse,
+  createSuccessResponse,
 } from "@/types/response.type";
 
 export const config = {

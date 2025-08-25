@@ -1,5 +1,7 @@
-import axiosInstance from "@/lib/axios";
 import { Order, User } from "@prisma/client";
+
+import axiosInstance from "@/lib/axios";
+import { RegisterFormData } from "@/lib/validations/auth";
 import { ActionResponse } from "@/types/response.type";
 
 /**
@@ -48,7 +50,7 @@ class UserAPIService {
    *
    */
   async registerUser(
-    data: RegisterFormData,
+    data: RegisterFormData
   ): Promise<Pick<User, "id" | "email" | "name" | "role">> {
     const url = `/auth/register`;
     const response = await axiosInstance.post<

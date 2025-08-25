@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
-import { QueryErrorResetBoundary } from '@tanstack/react-query';
-import { ErrorBoundary } from 'react-error-boundary';
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import React from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 interface QueryErrorFallbackProps {
   error: Error;

@@ -1,10 +1,14 @@
 
 'use server';
 
+import { OrderStatus, PaymentMethod } from "@prisma/client";
+
 import { auth } from "@/auth";
 import orderServices from "@/services/order.services";
-import { createErrorResponse, createSuccessResponse } from "@/types/response.type";
-import { OrderStatus, PaymentMethod } from "@prisma/client";
+import {
+  createErrorResponse,
+  createSuccessResponse,
+} from "@/types/response.type";
 
 /**
  * Creates a new order from the user's cart for a specific shop.
@@ -45,7 +49,7 @@ export async function createOrderAction({
       session.user.id,
       shop_id,
       payment_method,
-      pg_payment_id,
+      pg_payment_id
     );
 
     // TODO: revalidatePath
@@ -108,14 +112,21 @@ export async function updateOrderStatusAction({
 
     const order = await orderServices.getOrderById(order_id, { select: { shop_id: true } });
     if (!order || order.shop_id !== shop_id) {
-      return createErrorResponse("Unauthorized: Order does not belong to your shop.");
+      return createErrorResponse(
+        "Unauthorized: Order does not belong to your shop."
+      );
     }
 
-    const updatedOrder = await orderServices.updateOrderStatus(order_id, status);
+    const updatedOrder = await orderServices.updateOrderStatus(
+      order_id,
+      status
+    );
 
     // TODO:revalidate
-    return createSuccessResponse(updatedOrder, `Order status updated to ${status}`);
-
+    return createSuccessResponse(
+      updatedOrder,
+      `Order status updated to ${status}`
+    );
   } catch (error) {
     console.error("UPDATE ORDER STATUS ERROR:", error);
     return createErrorResponse("Failed to update order status.");
