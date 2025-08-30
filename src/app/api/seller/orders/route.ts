@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { auth } from "@/auth";
-import orderServices from "@/services/order.services";
+import authUtils from "@/lib/utils/auth.utils";
+import orderRepository from "@/repositories/order.repository";
 import {
   createErrorResponse,
   createSuccessResponse,
@@ -27,19 +27,13 @@ export const config = {
  *
  * @throws {Error} When order retrieval fails due to service errors
  *
- * @see {@link orderServices.getOrdersByShopId} for the underlying service method
+ * @see {@link orderRepository.getOrdersByShopId} for the underlying service method
  * @see {@link createSuccessResponse} and {@link createErrorResponse} for response formatting
  */
 export async function GET() {
   try {
-    const session = await auth();
-    const shopId = session?.user?.shop_id;
-    if (!shopId) {
-      const errorResponse = createErrorResponse("Unauthorized");
-      return NextResponse.json(errorResponse, { status: 401 });
-    }
-
-    const orders = await orderServices.getOrdersByShopId(shopId);
+    const shop_id = await authUtils.getShopId();
+    const orders = await orderRepository.getOrdersByShopId(shop_id);
     const successResponse = createSuccessResponse(
       orders,
       "Seller orders retrieved successfully"
