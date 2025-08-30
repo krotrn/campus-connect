@@ -2,16 +2,7 @@ import { Prisma, Shop } from "@prisma/client";
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-
-/**
- * Type alias for shop creation data.
- *
- * Defines the structure for creating new shops in the system.
- * Based on Prisma's ShopCreateInput with all required and optional fields
- * for comprehensive shop information management.
- *
- */
-export type CreateShopDto = Prisma.ShopCreateInput;
+import { ShopFormData } from "@/lib/validations/shop";
 
 /**
  * Type alias for shop update data.
@@ -78,21 +69,21 @@ class ShopServices {
    * @throws {Error} When invalid owner ID is provided
    *
    */
-  async getShopByOwnerId(): Promise<Shop[] | null>;
+  async getShopByOwnerId(): Promise<Shop | null>;
   async getShopByOwnerId<T extends ShopFindOptions>(
     options: T
   ): Promise<Prisma.ShopGetPayload<{ where: { owner_id: string } } & T> | null>;
   async getShopByOwnerId<T extends ShopFindOptions>(
     options?: T
   ): Promise<
-    Prisma.ShopGetPayload<{ where: { owner_id: string } } & T> | Shop[] | null
+    Prisma.ShopGetPayload<{ where: { owner_id: string } } & T> | Shop | null
   > {
     const session = await auth();
     if (!session?.user.id) {
       throw new Error("Unauthorized");
     }
     const query = { where: { owner_id: session.user.id }, ...(options ?? {}) };
-    return prisma.shop.findMany(query);
+    return prisma.shop.findUnique(query);
   }
 
   /**
@@ -112,16 +103,26 @@ class ShopServices {
    * @throws {Error} When database creation fails
    *
    */
-  async createShop(data: CreateShopDto): Promise<Shop>;
+  async createShop(data: ShopFormData): Promise<Shop>;
   async createShop<T extends ShopCreateOptions>(
-    data: CreateShopDto,
+    data: ShopFormData,
     options: T
-  ): Promise<Prisma.ShopGetPayload<{ data: CreateShopDto } & T>>;
+  ): Promise<Prisma.ShopGetPayload<{ data: ShopFormData } & T>>;
   async createShop<T extends ShopCreateOptions>(
-    data: CreateShopDto,
+    data: ShopFormData,
     options?: T
-  ): Promise<Prisma.ShopGetPayload<{ data: CreateShopDto } & T> | Shop> {
-    const query = { data, ...(options ?? {}) };
+  ): Promise<Prisma.ShopGetPayload<{ data: ShopFormData } & T> | Shop> {
+    const session = await auth();
+    if (!session?.user.id) {
+      throw new Error("Unauthorized");
+    }
+    const query = {
+      data: {
+        ...data,
+        owner: { connect: { id: session.user.id } },
+      },
+      ...(options ?? {}),
+    };
     return prisma.shop.create(query);
   }
 
@@ -134,20 +135,20 @@ class ShopServices {
    *
    *
    */
-  async updateShop(shop_id: string, data: UpdateShopDto): Promise<Shop>;
+  async updateShop(shop_id: string, data: ShopFormData): Promise<Shop>;
   async updateShop<T extends ShopUpdateOptions>(
     shop_id: string,
-    data: UpdateShopDto,
+    data: ShopFormData,
     options: T
   ): Promise<
-    Prisma.ShopGetPayload<{ where: { id: string }; data: UpdateShopDto } & T>
+    Prisma.ShopGetPayload<{ where: { id: string }; data: ShopFormData } & T>
   >;
   async updateShop<T extends ShopUpdateOptions>(
     shop_id: string,
-    data: UpdateShopDto,
+    data: ShopFormData,
     options?: T
   ): Promise<
-    | Prisma.ShopGetPayload<{ where: { id: string }; data: UpdateShopDto } & T>
+    | Prisma.ShopGetPayload<{ where: { id: string }; data: ShopFormData } & T>
     | Shop
   > {
     const query = { where: { id: shop_id }, data, ...(options ?? {}) };
@@ -184,7 +185,21 @@ class ShopServices {
     return prisma.shop.delete(query);
   }
 
-  async getShopById(shop_id : string): Promise<Shop | null>;
+  /**
+   * Retrieves a shop by its unique identifier.
+   *
+   * Finds a specific shop using its ID. Essential for displaying shop details,
+   * managing shop operations, and accessing shop-related information.
+   * Supports flexible query options for including related data.
+   *
+   * @param shop_id - The unique identifier of the shop to retrieve
+   * @param options - Optional Prisma query options for includes, selects, etc.
+   * @returns A promise that resolves to the shop or null if not found
+   *
+   * @throws {Error} When database query fails
+   * @throws {Error} When invalid shop ID is provided
+   */
+  async getShopById(shop_id: string): Promise<Shop | null>;
   async getShopById<T extends ShopFindOptions>(
     shop_id: string,
     options: T
@@ -208,73 +223,6 @@ class ShopServices {
  * including CRUD operations, owner-specific queries, and flexible data retrieval
  * with comprehensive validation and type safety.
  *
- * @example
- * ```typescript
- * // Import and use directly
- * import shopServices from '@/services/shop.services';
- *
- * // Create a shop
- * const shop = await shopServices.createShop({
- *   name: 'Campus Tech Store',
- *   description: 'Latest technology for students',
- *   owner: { connect: { id: 'user123' } }
- * });
- *
- * // Get shop details
- * const shopDetails = await shopServices.getShopById('shop456', {
- *   include: { products: true, owner: true }
- * });
- *
- * // Update shop
- * await shopServices.updateShop('shop456', {
- *   description: 'Updated with new inventory'
- * });
- *
- * // Get owner's shop
- * const ownerShop = await shopServices.getShopByOwnerId('user123');
- * ```
- *
- * @example
- * ```typescript
- * // Usage in React hooks
- * const useShop = (shopId: string) => {
- *   const [shop, setShop] = useState<Shop | null>(null);
- *   const [loading, setLoading] = useState(false);
- *
- *   const loadShop = useCallback(async () => {
- *     setLoading(true);
- *     try {
- *       const shopData = await shopServices.getShopById(shopId, {
- *         include: {
- *           products: true,
- *           owner: true,
- *           orders: { include: { orderItems: true } }
- *         }
- *       });
- *       setShop(shopData);
- *     } catch (error) {
- *       console.error('Failed to load shop:', error);
- *     } finally {
- *       setLoading(false);
- *     }
- *   }, [shopId]);
- *
- *   const updateShop = useCallback(async (data: UpdateShopDto) => {
- *     const updated = await shopServices.updateShop(shopId, data);
- *     setShop(updated);
- *     return updated;
- *   }, [shopId]);
- *
- *   return { shop, loading, loadShop, updateShop };
- * };
- * ```
- *
- * @see {@link ShopServices} for available methods and detailed documentation
- * @see {@link Shop} for shop data structure
- * @see {@link CreateShopDto} for shop creation data
- * @see {@link UpdateShopDto} for shop update data
- *
- * @since 1.0.0
  */
 const shopServices = new ShopServices();
 
