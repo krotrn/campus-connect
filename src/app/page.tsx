@@ -1,12 +1,9 @@
 import React from "react";
-import Login from "@/page-components/auth/login";
 
 const page = () => {
-  return (
-    <>
-      <Login />
-    </>
-  );
+  <>
+    <div>hy, i am kaushal here</div>
+  </>;
 };
 
 export default page;
