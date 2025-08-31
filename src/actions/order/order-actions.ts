@@ -8,7 +8,7 @@ import orderRepository from "@/repositories/order.repository";
 import {
   createErrorResponse,
   createSuccessResponse,
-} from "@/types/response.type";
+} from "@/types/response.types";
 
 /**
  * Creates a new order from the user's cart for a specific shop.
