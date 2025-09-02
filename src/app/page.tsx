@@ -1,9 +1,5 @@
-import React from "react";
+import FrontPage from "@/page-components/front-page/homepage";
 
-const page = () => {
-  <>
-    <div>hy, i am kaushal here</div>
-  </>;
-};
-
-export default page;
+export default function Page() {
+  return <FrontPage />;
+}
