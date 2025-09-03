@@ -1,7 +1,13 @@
 import React from "react";
 
-import ShopPage from "@/page-components/shop/shop-page";
+import IndividualShop from "@/page-components/shops/individual-shop";
 
-export default function page() {
-  return <ShopPage />;
+type Props = {
+  searchParams: Promise<{ shop_id: string }>;
+};
+
+export default async function Page({ searchParams }: Props) {
+  const { shop_id } = await searchParams;
+
+  return <IndividualShop shop_id={shop_id} />;
 }
