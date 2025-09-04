@@ -23,7 +23,8 @@ export interface ActionResponse<T = unknown> {
   /** Indicates if an error occurred during the operation */
   error: boolean;
   /** Optional data payload returned on successful operations */
-  data?: T;
+  data: T;
+  /** Human-readable description of the operation result */
   details: string;
 }
 
@@ -120,6 +121,7 @@ export const createErrorResponse = (
   success: false,
   error: true,
   details,
+  data: null,
 });
 
 /**
