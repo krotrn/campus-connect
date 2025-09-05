@@ -65,6 +65,11 @@ export const queryKeys = {
     orders: () => ["seller", "orders"] as const,
     dashboard: () => ["seller", "dashboard"] as const,
   },
+
+  health: {
+    all: ["health"] as const,
+    database: () => ["health", "database"] as const,
+  },
 } as const;
 
 export type QueryKeys = typeof queryKeys;
