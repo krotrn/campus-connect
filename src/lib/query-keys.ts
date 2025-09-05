@@ -12,8 +12,12 @@ export const queryKeys = {
    */
   users: {
     all: ["users"] as const,
-    orders: (userId: string) => ["users", userId, "orders"] as const,
-    profile: (userId: string) => ["users", userId, "profile"] as const,
+    /** User-specific orders query key factory */
+    orders: (user_id: string) => ["users", user_id, "orders"] as const,
+    /** User profile query key factory */
+    profile: (user_id: string) => ["users", user_id, "profile"] as const,
+    /** User addresses query key factory */
+    addresses: () => ["users", "addresses"] as const,
   },
 
   /**
