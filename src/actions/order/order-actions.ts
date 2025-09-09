@@ -2,15 +2,13 @@
 'use server';
 
 import { OrderStatus, PaymentMethod } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
-import { auth } from "@/auth";
+import { InternalServerError, UnauthorizedError } from "@/lib/custom-error";
 import { authUtils } from "@/lib/utils-functions";
 import orderRepository from "@/repositories/order.repository";
 import orderService from "@/services/order.service";
-import {
-  createErrorResponse,
-  createSuccessResponse,
-} from "@/types/response.types";
+import { createSuccessResponse } from "@/types/response.types";
 
 export async function createOrderAction({
   shop_id,
@@ -24,7 +22,7 @@ export async function createOrderAction({
   try {
     const user_id = await authUtils.getUserId();
     if (!user_id) {
-      return createErrorResponse("Unauthorized: Please log in.");
+      throw new UnauthorizedError("Unauthorized: Please log in.");
     }
     const pg_payment_id =
       payment_method === "ONLINE" ? `txn_${new Date().getTime()}` : "offline";
@@ -37,11 +35,11 @@ export async function createOrderAction({
       pg_payment_id
     );
 
-    // TODO: revalidatePath
+    revalidatePath(`/shop/${shop_id}/cart`);
     return createSuccessResponse(order, "Order placed successfully!");
   } catch (error) {
     console.error("CREATE ORDER ERROR:", error);
-    return createErrorResponse("Failed to create order.");
+    throw new InternalServerError("Failed to create order.");
   }
 }
 
@@ -53,17 +51,13 @@ export async function updateOrderStatusAction({
   status: OrderStatus;
 }) {
   try {
-    const session = await auth();
-    const shop_id = session?.user?.shop_id;
-    if (!shop_id) {
-      return createErrorResponse("Unauthorized: You are not a seller.");
-    }
+    const shop_id = await authUtils.getShopId();
 
     const order = await orderRepository.getOrderById(order_id, {
       select: { shop_id: true },
     });
     if (!order || order.shop_id !== shop_id) {
-      return createErrorResponse(
+      throw new UnauthorizedError(
         "Unauthorized: Order does not belong to your shop."
       );
     }
@@ -77,6 +71,6 @@ export async function updateOrderStatusAction({
     );
   } catch (error) {
     console.error("UPDATE ORDER STATUS ERROR:", error);
-    return createErrorResponse("Failed to update order status.");
+    throw new InternalServerError("Failed to update order status.");
   }
 }
